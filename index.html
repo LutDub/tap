@@ -30,13 +30,43 @@
     <div id="clicker">
         <p>Клики: <span id="click-count">0</span></p>
         <button onclick="incrementClick()">Кликни меня!</button>
+        <div>
+            <p>Уровень: <span id="level">1</span></p>
+            <p>Цена уровня: <span id="level-cost">10</span></p>
+            <button onclick="upgradeLevel()">Улучшить уровень</button>
+        </div>
     </div>
     <script>
-        let clickCount = 0;
+        let clickCount = parseInt(localStorage.getItem('clickCount')) || 0;
+        let level = parseInt(localStorage.getItem('level')) || 1;
+        let levelCost = parseInt(localStorage.getItem('levelCost')) || 10;
+
+        document.getElementById('click-count').innerText = clickCount;
+        document.getElementById('level').innerText = level;
+        document.getElementById('level-cost').innerText = levelCost;
 
         function incrementClick() {
-            clickCount++;
+            clickCount += level;
             document.getElementById('click-count').innerText = clickCount;
+            localStorage.setItem('clickCount', clickCount);
+        }
+
+        function upgradeLevel() {
+            if (clickCount >= levelCost) {
+                clickCount -= levelCost;
+                level += 1;
+                levelCost = Math.floor(levelCost * 1.5);
+
+                document.getElementById('click-count').innerText = clickCount;
+                document.getElementById('level').innerText = level;
+                document.getElementById('level-cost').innerText = levelCost;
+
+                localStorage.setItem('clickCount', clickCount);
+                localStorage.setItem('level', level);
+                localStorage.setItem('levelCost', levelCost);
+            } else {
+                alert('Недостаточно кликов для улучшения уровня!');
+            }
         }
 
         window.Telegram.WebApp.ready();
