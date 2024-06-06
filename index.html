@@ -35,18 +35,26 @@
             <p>Цена уровня: <span id="level-cost">10</span></p>
             <button onclick="upgradeLevel()">Улучшить уровень</button>
         </div>
+        <div>
+            <p>Прибыль в секунду (PPS): <span id="pps">0</span></p>
+            <button onclick="buyPPS()">Купить PPS</button>
+        </div>
     </div>
     <script>
         let clickCount = parseInt(localStorage.getItem('clickCount')) || 0;
         let level = parseInt(localStorage.getItem('level')) || 1;
         let levelCost = parseInt(localStorage.getItem('levelCost')) || 10;
+        let pps = parseInt(localStorage.getItem('pps')) || 0;
+        let ppsCost = parseInt(localStorage.getItem('ppsCost')) || 20;
 
         document.getElementById('click-count').innerText = clickCount;
         document.getElementById('level').innerText = level;
         document.getElementById('level-cost').innerText = levelCost;
+        document.getElementById('pps').innerText = pps;
+        document.getElementById('pps-cost').innerText = ppsCost;
 
         function incrementClick() {
-            clickCount += level;
+            clickCount++;
             document.getElementById('click-count').innerText = clickCount;
             localStorage.setItem('clickCount', clickCount);
         }
@@ -68,6 +76,32 @@
                 alert('Недостаточно кликов для улучшения уровня!');
             }
         }
+
+        function buyPPS() {
+            if (clickCount >= ppsCost) {
+                clickCount -= ppsCost;
+                pps += 1;
+                ppsCost = Math.floor(ppsCost * 1.5);
+
+                document.getElementById('click-count').innerText = clickCount;
+                document.getElementById('pps').innerText = pps;
+                document.getElementById('pps-cost').innerText = ppsCost;
+
+                localStorage.setItem('clickCount', clickCount);
+                localStorage.setItem('pps', pps);
+                localStorage.setItem('ppsCost', ppsCost);
+            } else {
+                alert('Недостаточно кликов для покупки PPS!');
+            }
+        }
+
+        function generatePPS() {
+            clickCount += pps;
+            document.getElementById('click-count').innerText = clickCount;
+            localStorage.setItem('clickCount', clickCount);
+        }
+
+        setInterval(generatePPS, 1000);
 
         window.Telegram.WebApp.ready();
     </script>
